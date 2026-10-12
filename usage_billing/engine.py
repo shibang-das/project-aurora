@@ -38,7 +38,5 @@ class UsageBillingEngine:
         total_units = sum(e.quantity for e in events)
         plan = self._plans.get(customer_id)
         billable_units = max(0, total_units - plan.included_units)
-        for e in events:
-            print(max(0, e.quantity - plan.included_units))
         amount = round(max(0,billable_units) * plan.price_per_unit, 2)
         return Invoice(customer_id, month, total_units, billable_units, amount)
