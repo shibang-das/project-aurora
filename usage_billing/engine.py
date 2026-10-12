@@ -13,6 +13,17 @@ class UsageBillingEngine:
     def add_event(self, event: UsageEvent) -> bool:
         if not event.event_id or not event.customer_id or event.quantity < 0:
             return False
+        if event.event_id in self._events:
+            return False
+        
+        # count only spaces in customer id edge case
+        count_space=0
+        for c in event.customer_id:
+            if(c==' '):
+                count_space+=1
+        if(count_space == len(event.customer_id)):
+            return False
+        
         try:
             datetime.fromisoformat(event.timestamp.replace("Z", "+00:00"))
         except (TypeError, ValueError):
@@ -25,7 +36,9 @@ class UsageBillingEngine:
         end = datetime(start.year + (start.month == 12), 1 if start.month == 12 else start.month + 1, 1, tzinfo=start.tzinfo)
         events = [e for e in self._events.values() if e.customer_id == customer_id and start <= datetime.fromisoformat(e.timestamp.replace("Z", "+00:00")) < end]
         total_units = sum(e.quantity for e in events)
-        plan = self._plans.get(customer_id, Plan(0, 0.0))
+        plan = self._plans.get(customer_id)
         billable_units = max(0, total_units - plan.included_units)
-        amount = round(sum(max(0, e.quantity - plan.included_units) * plan.price_per_unit for e in events), 2)
+        for e in events:
+            print(max(0, e.quantity - plan.included_units))
+        amount = round(max(0,billable_units) * plan.price_per_unit, 2)
         return Invoice(customer_id, month, total_units, billable_units, amount)
