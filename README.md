@@ -1,6 +1,6 @@
 # Practice Exercise: Usage Billing Engine
 
-This is an original practice repository inspired by practical Python debugging interviews. It is not an actual Zenskar assessment.
+This is an original practice repository inspired by practical Python debugging interviews.
 
 ## Scenario
 A SaaS product bills customers based on usage events. Each event has an event ID, customer ID, timestamp, and quantity. Customers have a plan with an included monthly allowance and a per-unit price after the allowance. Events may be delivered more than once, and invalid events must not affect invoices.
